@@ -1,0 +1,64 @@
+extend type QueryResolver {
+    findAllUsers: [UserInfo]
+    findAllPosts: [Post]
+    findAllAlbums: [Album]
+    findAll: MasterData
+    findAllWithFilter: MasterData
+}
+
+type MasterData {
+    users:[UserInfo]
+    posts:[Post]
+    albums:[Album]
+}
+
+type UserInfo{
+    id:Int
+    name:String
+    username:String
+    email:String
+    address:Address
+    phone:String
+    website:String
+    company:Company
+}
+
+
+type Address{
+    street:String
+    suite:String
+    city:String
+    zipcode:String
+    geo:Geo
+}
+
+type Geo{
+    lat:String
+    lng:String
+}
+
+type Company{
+    name:String
+    catchPhrase:String
+    bs:String
+}
+
+interface  Common {
+    userId:String
+    id:Int
+    title:String
+}
+
+type Post {
+    userId:String
+    id:Int
+    title:String
+    body:String
+}
+
+
+type Album {
+    userId:String
+    id:Int
+    title:String
+}

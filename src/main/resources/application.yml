@@ -1,0 +1,85 @@
+#DGS configuration refer :https://netflix.github.io/dgs/configuration/
+
+spring:
+  application:
+    name: netflix-dgs-graphql-example
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+    hikari:
+      connection-timeout: 2000
+      initialization-fail-timeout: 0
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        enable_lazy_load_no_trans: true
+    hibernate:
+      ddl-auto: none
+    defer-datasource-initialization: true
+  h2:
+    console:
+      enabled: true
+
+
+
+  main:
+    allow-bean-definition-overriding: true
+
+jsonplaceholder:
+  url: http://localhost:1080
+
+
+
+#Enable custom exception handler
+exception:
+  custom:
+    enable: false
+
+
+graphiql:
+  mapping: /graphiql
+  endpoint:
+    graphql: /graphql
+  basePath: /
+  enabled: true
+  pageTitle: GraphiQL with KickStart
+
+graphql:
+  servlet:
+    # Sets the path where GraphQL servlet will be exposed. If not specified defaults to "/graphql"
+    mapping: /graphql
+    exception-handlers-enabled: true
+    async-mode-enabled: true
+    actuator-metrics: true
+    tracing-enabled: false
+
+
+voyager:
+  enabled: true
+  basePath: /
+  mapping: /voyager
+  endpoint: /graphql
+  cdn:
+    enabled: false
+    version: latest
+  pageTitle: Voyager
+  displayOptions:
+    skipRelay: true
+    skipDeprecated: true
+    rootType: Query
+    sortByAlphabet: false
+    showLeafFields: true
+    hideRoot: false
+  hideDocs: false
+  hideSettings: false
+
+logging:
+  pattern:
+    console: -%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:}){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %clr(%X{correlation_id}){red} %m%n%wEx
+server:
+  port: 8083

@@ -1,0 +1,11 @@
+id,first_name,last_name,position,salary,age,department_id,organization_id
+1,Leighton,Eddison,Web Developer IV,63216,39,2,3
+2,Abelard,Zukerman,Pharmacist,87690,27,2,4
+3,Elizabeth,Beck,Legal Assistant,80389,30,4,2
+4,Terrill,Masdon,VP Product Management,54685,31,3,1
+5,Liz,Chelam,Account Executive,93995,29,3,2
+6,Derk,Poacher,Electrical Engineer,64851,36,2,1
+7,Jaquenetta,Gass,Design Engineer,21748,24,4,5
+8,Waldo,Moger,Account Coordinator,46902,36,1,4
+9,Amata,Crocetto,Assistant Media Planner,27612,23,1,4
+10,Frasier,Cockshoot,Recruiter,94712,40,4,2

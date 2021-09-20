@@ -1,0 +1,17 @@
+query GET_ALL_BOOKS {
+    books {
+        publishDate
+        createdTime
+        publisher
+    }
+}
+
+query GET_BOOK_BY_ID($id: ID) {
+
+    bookById(id:$id){
+        title
+        publishDate
+        createdTime
+        publisher
+    }
+}

@@ -1,0 +1,36 @@
+scalar DateTime_Scalar
+scalar Date
+
+extend type QueryResolver {
+    bookById(id:ID): Book
+    books: [Book]
+}
+
+extend type MutationResolver {
+    addBook(request:BookInput): Book
+    updateBook(request:BookUpdateInput): Book
+}
+
+
+type Book {
+    id:ID!
+    title:String
+    genre:String
+    publisher:String
+    publishDate:Date
+    createdTime :DateTime_Scalar
+}
+
+
+input BookUpdateInput {
+    id:ID!
+    title:String
+    genre:String
+    publisher:String
+}
+
+input BookInput {
+    title:String!
+    genre:String!
+    publisher:String!
+}
