@@ -1,11 +1,11 @@
 
-extend type QueryResolver {
+extend type Query {
     employees: [Employee]
     employeesWithFilter(filter: EmployeeFilter): [Employee]
     employee(id: ID!): Employee!
 }
 
-extend type MutationResolver {
+extend type Mutation {
     addEmployee(employee: EmployeeInput!): Employee
 }
 

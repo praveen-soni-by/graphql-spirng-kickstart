@@ -1,9 +1,8 @@
 package com.syscho.graphql.book.resolver;
 
-import com.syscho.graphql.book.BookRepository;
 import com.syscho.graphql.exception.NoDataFoundException;
+import com.syscho.graphql.generated.resolver.BookQueryResolver;
 import com.syscho.graphql.generated.types.Book;
-import graphql.kickstart.tools.GraphQLQueryResolver;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +17,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Component
-public class BookResolver implements GraphQLQueryResolver {
-    private final BookRepository bookRepository;
+public class BookResolver implements BookQueryResolver {
+
     private final JdbcTemplate jdbcTemplate;
 
     public List<Book> books(DataFetchingEnvironment environment) {

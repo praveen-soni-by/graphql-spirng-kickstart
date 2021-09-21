@@ -1,12 +1,12 @@
 scalar DateTime_Scalar
 scalar Date
 
-extend type QueryResolver {
+extend type Query {
     bookById(id:ID): Book
     books: [Book]
 }
 
-extend type MutationResolver {
+extend type Mutation {
     addBook(request:BookInput): Book
     updateBook(request:BookUpdateInput): Book
 }

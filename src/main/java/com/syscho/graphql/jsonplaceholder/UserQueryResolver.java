@@ -1,11 +1,11 @@
 package com.syscho.graphql.jsonplaceholder;
 
+import com.syscho.graphql.generated.resolver.JsonplaceholderQueryResolver;
 import com.syscho.graphql.generated.types.Album;
 import com.syscho.graphql.generated.types.MasterData;
 import com.syscho.graphql.generated.types.Post;
 import com.syscho.graphql.generated.types.UserInfo;
 import com.syscho.graphql.jsonplaceholder.client.JsonPlaceHolderClient;
-import graphql.kickstart.tools.GraphQLQueryResolver;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,17 +20,12 @@ import java.util.concurrent.Executors;
 
 @RequiredArgsConstructor
 @Component
-public class UserQueryResolver implements GraphQLQueryResolver {
+public class UserQueryResolver implements JsonplaceholderQueryResolver {
 
     private final JsonPlaceHolderClient jsonPlaceHolderClient;
     private final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-
-    public List<UserInfo> findAllUsers() {
-        return jsonPlaceHolderClient.getUsers().block();
-    }
-
-    public CompletableFuture<List<Post>> findAllPosts() {
+    public CompletableFuture<List<Post>> findAllPosts_Test() {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return jsonPlaceHolderClient.getPosts().block();
@@ -41,11 +36,30 @@ public class UserQueryResolver implements GraphQLQueryResolver {
 
     }
 
-    public List<Album> findAllAlbums() {
+
+    @Override
+    public List<UserInfo> findAllUsers(DataFetchingEnvironment env) throws Exception {
+        return jsonPlaceHolderClient.getUsers().block();
+    }
+
+    @Override
+    public List<Post> findAllPosts(DataFetchingEnvironment env) throws Exception {
+        // return CompletableFuture.supplyAsync(() -> {
+        //    try {
+        return jsonPlaceHolderClient.getPosts().block();
+        //    } catch (WebClientRequestException exception) {
+        //       throw new RuntimeException("Service is down , try after some time");
+        //   }
+        // }, executorService);
+    }
+
+    @Override
+    public List<Album> findAllAlbums(DataFetchingEnvironment env) throws Exception {
         return jsonPlaceHolderClient.getAlbums().block();
     }
 
-    public MasterData findAll() {
+    @Override
+    public MasterData findAll(DataFetchingEnvironment env) throws Exception {
         MasterData masterData = new MasterData();
         Mono<List<UserInfo>> users = jsonPlaceHolderClient.getUsers();
         Mono<List<Album>> albums = jsonPlaceHolderClient.getAlbums();
@@ -58,7 +72,6 @@ public class UserQueryResolver implements GraphQLQueryResolver {
                     return masterData;
                 }).block();
     }
-
 
     public MasterData findAllWithFilter(DataFetchingEnvironment environment) {
         MasterData masterData = new MasterData();

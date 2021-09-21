@@ -1,4 +1,4 @@
 schema {
-    query: QueryResolver
-    mutation: MutationResolver
+    query: Query
+    mutation: Mutation
 }

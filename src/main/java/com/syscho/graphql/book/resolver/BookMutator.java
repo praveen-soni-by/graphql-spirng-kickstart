@@ -2,8 +2,10 @@ package com.syscho.graphql.book.resolver;
 
 import com.syscho.graphql.book.BookDO;
 import com.syscho.graphql.book.BookRepository;
+import com.syscho.graphql.generated.resolver.BookMutationResolver;
 import com.syscho.graphql.generated.types.Book;
-import graphql.kickstart.tools.GraphQLMutationResolver;
+import com.syscho.graphql.generated.types.BookInput;
+import com.syscho.graphql.generated.types.BookUpdateInput;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,26 +20,33 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 @Component
-public class BookMutator implements GraphQLMutationResolver {
+public class BookMutator implements BookMutationResolver {
 
     private final BookRepository bookRepository;
     private final JdbcTemplate jdbcTemplate;
-
-    public Book addBook(Book bookVO) {
-        BookDO bookDO = new BookDO();
-        bookVO.setId(UUID.randomUUID().toString());
-        BeanUtils.copyProperties(bookVO, bookDO);
-        bookRepository.save(bookDO);
-        return bookVO;
-    }
 
     public void delete(String id) {
         jdbcTemplate.update("DELETE FROM  BOOK WHERE ID = ? ", id);
     }
 
-    public Book updateBook(Book bookVO, DataFetchingEnvironment environment) {
+
+    @Override
+    public Book addBook(BookInput request, DataFetchingEnvironment env) throws Exception {
+        BookDO bookDO = new BookDO();
+        BeanUtils.copyProperties(request, bookDO);
+        bookDO.setId(UUID.randomUUID().toString());
+        bookRepository.save(bookDO);
+
+        Book book = new Book();
+        BeanUtils.copyProperties(book, bookDO);
+
+        return book;
+    }
+
+    @Override
+    public Book updateBook(BookUpdateInput request, DataFetchingEnvironment env) throws Exception {
         StringBuilder updateFields = new StringBuilder();
-        Map<String, String> result = environment.getArgument("request");
+        Map<String, String> result = env.getArgument("request");
         result.forEach((key, value) -> {
             if (!key.equals("id"))
                 updateFields.append(" " + key + " = '" + value + "',");
@@ -48,5 +57,4 @@ public class BookMutator implements GraphQLMutationResolver {
         jdbcTemplate.update(updateQuery, id);
         return jdbcTemplate.queryForObject("select * from Book where id = ?", new BeanPropertyRowMapper<>(Book.class), id);
     }
-
 }

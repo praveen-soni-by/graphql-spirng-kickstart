@@ -1,4 +1,4 @@
-extend type QueryResolver {
+extend type Query {
     findAllUsers: [UserInfo]
     findAllPosts: [Post]
     findAllAlbums: [Album]
