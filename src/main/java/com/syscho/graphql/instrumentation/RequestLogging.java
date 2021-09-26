@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Slf4j
-@Component
+//@Component
 public class RequestLogging extends SimpleInstrumentation {
 
     private final String CORRELATION_ID = "correlation_id";

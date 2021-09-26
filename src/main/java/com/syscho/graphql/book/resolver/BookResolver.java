@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -21,22 +22,30 @@ public class BookResolver implements BookQueryResolver {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public List<Book> books(DataFetchingEnvironment environment) {
-        String query = "SELECT " + extractSelectedFields(environment) + " FROM BOOK ";
-        log.info("query : {}", query);
-        List<Book> books = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Book.class));
-        return books;
+    @Override
+    public CompletableFuture<List<Book>> books(DataFetchingEnvironment environment) {
+        return CompletableFuture.supplyAsync(() ->
+        {
+            String query = "SELECT " + extractSelectedFields(environment) + " FROM BOOK ";
+            log.info("query : {}", query);
+            List<Book> books = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Book.class));
+            return books;
+        });
     }
 
-    public Book bookById(String id, DataFetchingEnvironment environment) {
-        String query = prepareQueryById(environment);
-        log.info("query : {}", query);
-        try {
-            return jdbcTemplate.queryForObject(query, new BeanPropertyRowMapper<>(Book.class), new Object[]{id});
+    @Override
+    public CompletableFuture<Book> bookById(String id, DataFetchingEnvironment environment) {
+        return CompletableFuture.supplyAsync(() ->
+        {
+            String query = prepareQueryById(environment);
+            log.info("query : {}", query);
+            try {
+                return jdbcTemplate.queryForObject(query, new BeanPropertyRowMapper<>(Book.class), new Object[]{id});
 
-        } catch (EmptyResultDataAccessException exception) {
-            throw new NoDataFoundException(id);
-        }
+            } catch (EmptyResultDataAccessException exception) {
+                throw new NoDataFoundException(id);
+            }
+        });
     }
 
 

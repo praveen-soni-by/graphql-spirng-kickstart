@@ -1,9 +1,5 @@
 extend type Query {
-    findAllUsers: [UserInfo]
-    findAllPosts: [Post]
-    findAllAlbums: [Album]
-    findAll: MasterData
-    findAllWithFilter: MasterData
+    masterData: MasterData
 }
 
 type MasterData {

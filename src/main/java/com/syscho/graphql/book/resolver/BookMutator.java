@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -25,36 +26,39 @@ public class BookMutator implements BookMutationResolver {
     private final BookRepository bookRepository;
     private final JdbcTemplate jdbcTemplate;
 
-    public void delete(String id) {
-        jdbcTemplate.update("DELETE FROM  BOOK WHERE ID = ? ", id);
+    @Override
+    public CompletableFuture<Book> addBook(BookInput request, DataFetchingEnvironment env) throws Exception {
+        return CompletableFuture.supplyAsync(() ->
+                {
+                    BookDO bookDO = new BookDO();
+                    BeanUtils.copyProperties(request, bookDO);
+                    bookDO.setId(UUID.randomUUID().toString());
+                    bookRepository.save(bookDO);
+
+                    Book book = new Book();
+                    BeanUtils.copyProperties(book, bookDO);
+
+                    return book;
+                }
+        );
+
     }
 
-
     @Override
-    public Book addBook(BookInput request, DataFetchingEnvironment env) throws Exception {
-        BookDO bookDO = new BookDO();
-        BeanUtils.copyProperties(request, bookDO);
-        bookDO.setId(UUID.randomUUID().toString());
-        bookRepository.save(bookDO);
-
-        Book book = new Book();
-        BeanUtils.copyProperties(book, bookDO);
-
-        return book;
-    }
-
-    @Override
-    public Book updateBook(BookUpdateInput request, DataFetchingEnvironment env) throws Exception {
-        StringBuilder updateFields = new StringBuilder();
-        Map<String, String> result = env.getArgument("request");
-        result.forEach((key, value) -> {
-            if (!key.equals("id"))
-                updateFields.append(" " + key + " = '" + value + "',");
+    public CompletableFuture<Book> updateBook(BookUpdateInput request, DataFetchingEnvironment env) throws Exception {
+        return CompletableFuture.supplyAsync(() ->
+        {
+            StringBuilder updateFields = new StringBuilder();
+            Map<String, String> result = env.getArgument("request");
+            result.forEach((key, value) -> {
+                if (!key.equals("id"))
+                    updateFields.append(" " + key + " = '" + value + "',");
+            });
+            String updateQuery = "UPDATE BOOK SET  " + updateFields.substring(0, updateFields.toString().length() - 1) + " Where Id = ?";
+            String id = result.get("id");
+            log.info("Query :{} ", updateQuery);
+            jdbcTemplate.update(updateQuery, id);
+            return jdbcTemplate.queryForObject("select * from Book where id = ?", new BeanPropertyRowMapper<>(Book.class), id);
         });
-        String updateQuery = "UPDATE BOOK SET  " + updateFields.substring(0, updateFields.toString().length() - 1) + " Where Id = ?";
-        String id = result.get("id");
-        log.info("Query :{} ", updateQuery);
-        jdbcTemplate.update(updateQuery, id);
-        return jdbcTemplate.queryForObject("select * from Book where id = ?", new BeanPropertyRowMapper<>(Book.class), id);
     }
 }

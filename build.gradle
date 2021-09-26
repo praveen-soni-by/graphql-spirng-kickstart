@@ -58,6 +58,8 @@ graphqlCodegen {
     apiInterfaceStrategy = "DO_NOT_GENERATE"
     apiRootInterfaceStrategy = "INTERFACE_PER_SCHEMA"
     generateDataFetchingEnvironmentArgumentInApis = true
+    apiReturnType = "java.util.concurrent.CompletableFuture"
+
 }
 
 // Automatically generate GraphQL code on project build:
